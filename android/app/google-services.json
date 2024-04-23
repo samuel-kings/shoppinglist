@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "152408572529",
+    "firebase_url": "https://opensort-shopping-list-default-rtdb.firebaseio.com",
+    "project_id": "opensort-shopping-list",
+    "storage_bucket": "opensort-shopping-list.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152408572529:android:84b175c07613e1039411d0",
+        "android_client_info": {
+          "package_name": "com.lds.shopping_list"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152408572529-68tihk7krb5ogvo4lbn1869kdg0qp60a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1e7tOVz_XzWGTjqWyix0SkC5SkLBD8_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152408572529-68tihk7krb5ogvo4lbn1869kdg0qp60a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "152408572529-noiu1ei3d0o6i2d8ggofm6442p8j0ekl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.opensort.shoppinglist"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152408572529:android:eb92ef895827523b9411d0",
+        "android_client_info": {
+          "package_name": "com.opensort.shoppinglist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152408572529-68tihk7krb5ogvo4lbn1869kdg0qp60a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1e7tOVz_XzWGTjqWyix0SkC5SkLBD8_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152408572529-68tihk7krb5ogvo4lbn1869kdg0qp60a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "152408572529-noiu1ei3d0o6i2d8ggofm6442p8j0ekl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.opensort.shoppinglist"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,90 @@
+name: shoppinglist
+description: A joint shopping list app for families by Opensort
+
+publish_to: "none"
+
+version: 2.0.0+6
+
+environment:
+  sdk: ">=3.3.3 <4.0.0"
+
+dependencies:
+  after_layout: ^1.2.0
+  animated_snack_bar: ^0.4.0
+  animations: ^2.0.11
+  awesome_notifications: ^0.9.3+1
+  badges: ^3.1.2
+  cached_network_image: ^3.3.1
+  collection: ^1.18.0
+  community_material_icon: ^5.9.55
+  connection_notifier: ^2.0.1
+  cupertino_icons: ^1.0.8
+  currency_text_input_formatter: ^2.2.1
+  double_back_to_close_app: ^2.1.0
+  easy_image_viewer: ^1.4.1
+  ez_localization: ^1.1.1
+  file_picker: ^8.0.1
+  firebase_core: ^2.30.0
+  firebase_database: ^10.5.2
+  firebase_storage: ^11.7.2
+  flutter:
+    sdk: flutter
+  flutter_animate: ^4.5.0
+  flutter_image_compress: ^2.2.0
+  flutter_markdown: ^0.7.1
+  flutter_native_splash: ^2.4.0
+  flutter_secure_storage: ^9.0.0
+  focused_menu: ^1.0.5
+  google_fonts: ^6.2.1
+  in_date_utils: ^1.2.0+2
+  intl: ^0.19.0
+  loading_animation_widget: ^1.2.1
+  localstore: ^1.4.0
+  one_signal_api:
+    git:
+      url: https://github.com/samuel-kings/one_signal_api.git
+      ref: 46ac980f52516d9399dfa7271f118f6d836b9d4d
+  onesignal_flutter: ^3.5.0
+  package_info_plus: ^7.0.0
+  provider: ^6.1.2
+  random_string: ^2.3.1
+  recase: ^4.1.0
+  share_plus: ^8.0.3
+  shimmer_animation: ^2.1.0+1
+  smooth_page_indicator: ^1.1.0
+  url_launcher: ^6.2.6
+  wakelock_plus: ^1.2.4
+
+dependency_overrides:
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo.png"
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/logo.png
+  color_dark: "#001F25"
+  image_dark: assets/logo_dark.png
+  android_12:
+    image: assets/android12.png
+    icon_background_color: "#ffffff"
+    image_dark: assets/android12_dark.png
+    icon_background_color_dark: "#001F25"
+  web: false
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - assets/languages/
+    - assets/onboarding/

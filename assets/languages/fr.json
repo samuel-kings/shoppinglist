@@ -1,0 +1,142 @@
+{
+  "general": {
+    "done": "Terminé",
+    "skip": "Passer",
+    "cancel": "Annuler",
+    "continue": "Continuer",
+    "validator": "Le nom doit contenir au moins 3 caractères",
+    "emptyValidator": "Le champ ne peut pas être vide",
+    "appVersion": "Version de l'application",
+    "copied": "Copié dans le presse-papiers",
+    "opsCancelled": "Opération annulée",
+    "enableNotifsDialogTitle": "Activer les notifications",
+    "enableNotifsDialogBody": "Cela vous permet de définir des rappels et d'être notifié lorsqu'un élément vous est attribué.",
+    "enable": "Activer",
+    "enabled": "Notifications activées",
+    "disabled": "Notifications désactivées. Vous pouvez aller dans les paramètres de l'application pour l'activer plus tard"
+  },
+
+  "localeScreens": {
+    "welcome": "BIENVENUE",
+    "getStarted": "Commençons",
+    "selectLang": "Sélectionner la langue",
+    "english": "Anglais",
+    "french": "Français",
+    "spanish": "Espagnol",
+    "portugese": "Portugais",
+    "russian": "Russe"
+  },
+
+  "onboarding": {
+    "onboardingTitle1": "Planifiez et organisez vos achats",
+    "onboardingTitle2": "Faites du shopping en famille",
+    "onboardingTitle3": "Contrôle d'accès",
+    "onboardingTitle4": "Soyez rappelé",
+    "onboardingDesc1": "Bienvenue dans notre application d'achat. Planifiez facilement vos prochains achats",
+    "onboardingDesc2": "Vous pouvez ajouter des membres de la famille et des amis à votre cercle ou rejoindre le leur et collaborer ensemble sur un plan d'achat",
+    "onboardingDesc3": "Gérez qui peut accéder aux listes au sein de votre cercle",
+    "onboardingDesc4": "N'oubliez jamais rien. Définissez des rappels opportuns pour vous aider à vous souvenir quand et quoi acheter"
+  },
+
+  "createAcctNameScreen": {
+    "heading": "Nom du compte"
+  },
+  
+  "createOrJoinScreen": {
+    "createFam": "Créer une nouvelle famille",
+    "joinFam": "Rejoindre une famille existante",
+    "famName": "Entrez le nom de la famille",
+    "familyId": "Entrez l'ID/lien de la famille",
+    "create": "Créer",
+    "join": "Rejoindre",
+    "success": "Connexion réussie"
+  },
+
+  "home": {
+    "title": "Liste de courses",
+    "searchHint": "Ajouter un produit",
+    "createList": "Créer une nouvelle liste",
+    "exit": "Appuyez à nouveau sur Retour pour quitter",
+    "current": "Actuel",
+    "completed": "Terminé",
+    "emptyList": "Vous n'avez pas de liste de courses. Cliquez sur l'icône plus pour en créer une",
+    "emptyList2": "Vous n'avez actuellement aucune liste de courses terminée",
+    "view": "Voir",
+    "select": "Sélectionner",
+    "unselect": "Désélectionner",
+    "markComplete": "Marquer comme terminé",
+    "markUncomplete": "Marquer comme non terminé",
+    "delete": "Supprimer",
+    "hide": "Masquer les éléments cochés",
+    "show": "Afficher les éléments cochés",
+    "hideCat": "Masquer les catégories",
+    "showCat": "Afficher les catégories",
+    "markSelectedComplete": "Cocher la sélection",
+    "markSelectedUncomplete": "Décocher la sélection",
+    "deleteSelected": "Supprimer la sélection",
+    "markedAllMessage": "Tout marqué comme terminé",
+    "markedMessage": "Marqué comme terminé",
+    "unmarkedAllMessage": "Tout marqué comme non terminé",
+    "unmarkedAMessage": "Marqué comme non terminé",
+    "sureToDelete": "Êtes-vous sûr de vouloir supprimer cet élément?",
+    "sureToDeleteSelected": "Êtes-vous sûr de vouloir supprimer tous les éléments sélectionnés?",
+    "deletedMessage": "Retiré de la liste",
+    "deletedSeletedMessage": "Les éléments sélectionnés ont été supprimés"
+  },
+
+  "details": {
+    "category": "Catégorie",
+    "editCat": "Modifier la catégorie",
+    "selectCat": "Sélectionner une catégorie",
+    "setReminder": "Définir un rappel",
+    "addPhoto": "Ajouter une photo",
+    "viewPhoto": "Voir la photo",
+    "changePhoto": "Changer la photo",
+    "deletePhoto": "Supprimer la photo",
+    "assignedTo": "Attribué à",
+    "notAssigned": "Non attribué",
+    "everyone": "Tout le monde",
+    "assignTo": "Attribuer l'article à un membre de la famille",
+    "editCatDialogTitle": "Ajouter un produit à la catégorie",
+    "editCatDialogBody": "Voulez-vous ajouter '{productName}' à {categoryName}?",
+    "reminderTooltip": "Les destinataires recevront un rappel. Si personne n'est désigné, le rappel sera reçu par le créateur de cet article produit.",
+    "reminderSet": "Votre rappel a été programmé",
+    "reminder": "Rappel",
+    "reminderBody": "Rappel pour l'article de la liste de courses: {productName}"
+  },
+
+  "profile": {
+    "pageTitle": "Mon profil",
+    "manageFam": "Membres de la famille",
+    "changeLang": "Changer la langue",
+    "changeTheme": "Changer le thème",
+    "catMgmt": "Gérer les catégories",
+    "logout": "Déconnexion",
+    "logoutMessage": "Êtes-vous sûr de vouloir vous déconnecter?",
+    "changeLangSuccess": "Langue modifiée avec succès"
+  },
+
+  "manage": {
+    "pageTitle": "Membres de la famille",
+    "joined": "Date d'inscription",
+    "removeDialogTitle": "Retirer le membre",
+    "removeDialogMessage": "Êtes-vous sûr de vouloir retirer ce membre de la famille?",
+    "removeSuccessful": "Membre retiré avec succès",
+    "invite": "Inviter des membres à votre famille",
+    "copy": "Copier le lien",
+    "share": "Partager le lien",
+    "shareMessage": "Salut. Je vous invite à être membre de ma maison numérique.\nTéléchargez l'application: https://shoppinglist.opensort.app\nID de la famille: {familyId}"
+  },
+
+  "manageCats": {
+    "title": "Gérer les catégories",
+    "new": "Nouvelle catégorie",
+    "add": "Ajouter une nouvelle catégorie",
+    "edit": "Modifier la catégorie",
+    "delete": "Supprimer la catégorie",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette catégorie?",
+    "createSuccess": "Catégorie ajoutée avec succès",
+    "updateSuccess": "Catégorie mise à jour avec succès",
+    "deleteSuccess": "Catégorie supprimée avec succès"
+  }
+}

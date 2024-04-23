@@ -1,0 +1,142 @@
+{
+  "general": {
+    "done": "Feito",
+    "skip": "Pular",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "validator": "O nome deve ter pelo menos 3 caracteres",
+    "emptyValidator": "O campo não pode estar vazio",
+    "appVersion": "Versão do App",
+    "copied": "Copiado para a área de transferência",
+    "opsCancelled": "Operação cancelada",
+    "enableNotifsDialogTitle": "Ativar notificações",
+    "enableNotifsDialogBody": "Isso permite que você configure lembretes e receba notificações quando um item for atribuído a você.",
+    "enable": "Ativar",
+    "enabled": "Notificações ativadas",
+    "disabled": "Notificações desativadas. Você pode ir às configurações do aplicativo para ativá-las mais tarde"
+  },
+
+  "localeScreens": {
+    "welcome": "BEM-VINDO",
+    "getStarted": "Vamos começar",
+    "selectLang": "Selecionar idioma",
+    "english": "Inglês",
+    "french": "Francês",
+    "spanish": "Espanhol",
+    "portugese": "Português",
+    "russian": "Russo"
+  },
+
+  "onboarding": {
+    "onboardingTitle1": "Planeje e organize suas compras",
+    "onboardingTitle2": "Compre em família",
+    "onboardingTitle3": "Controle de acesso",
+    "onboardingTitle4": "Receba lembretes",
+    "onboardingDesc1": "Bem-vindo ao nosso aplicativo de compras. Planeje sua próxima compra com facilidade",
+    "onboardingDesc2": "Você pode adicionar familiares e amigos ao seu círculo ou se juntar ao deles, e colaborar juntos em um plano de compra",
+    "onboardingDesc3": "Gerencie quem pode acessar listas dentro do seu círculo",
+    "onboardingDesc4": "Nunca esqueça nada. Defina lembretes oportunos para ajudar você a lembrar quando e o que comprar"
+  },
+
+  "createAcctNameScreen": {
+    "heading": "Nome da conta"
+  },
+  
+  "createOrJoinScreen": {
+    "createFam": "Criar nova família",
+    "joinFam": "Juntar-se a uma família existente",
+    "famName": "Digite o nome da família",
+    "familyId": "Digite o ID/link da família",
+    "create": "Criar",
+    "join": "Juntar-se",
+    "success": "Login bem-sucedido"
+  },
+
+  "home": {
+    "title": "Lista de compras",
+    "searchHint": "Adicionar um produto",
+    "createList": "Criar nova lista",
+    "exit": "Pressione novamente para sair",
+    "current": "Atual",
+    "completed": "Concluído",
+    "emptyList": "Você não tem uma lista de compras. Clique no ícone de adição para criar uma",
+    "emptyList2": "Você não tem nenhuma lista de compras concluída no momento",
+    "view": "Ver",
+    "select": "Selecionar",
+    "unselect": "Desselecionar",
+    "markComplete": "Marcar como concluído",
+    "markUncomplete": "Marcar como não concluído",
+    "delete": "Deletar",
+    "hide": "Ocultar itens marcados",
+    "show": "Mostrar itens marcados",
+    "hideCat": "Ocultar categorias",
+    "showCat": "Mostrar categorias",
+    "markSelectedComplete": "Marcar selecionados como concluídos",
+    "markSelectedUncomplete": "Marcar selecionados como não concluídos",
+    "deleteSelected": "Deletar selecionados",
+    "markedAllMessage": "Todos marcados como concluídos",
+    "markedMessage": "Marcado como concluído",
+    "unmarkedAllMessage": "Todos marcados como não concluídos",
+    "unmarkedAMessage": "Marcado como não concluído",
+    "sureToDelete": "Tem certeza de que deseja deletar este item?",
+    "sureToDeleteSelected": "Tem certeza de que deseja deletar todos os itens selecionados?",
+    "deletedMessage": "Removido da lista",
+    "deletedSeletedMessage": "Os itens selecionados foram deletados"
+  },
+
+  "details": {
+    "category": "Categoria",
+    "editCat": "Editar categoria",
+    "selectCat": "Selecionar categoria",
+    "setReminder": "Definir lembrete",
+    "addPhoto": "Adicionar foto",
+    "viewPhoto": "Ver foto",
+    "changePhoto": "Alterar foto",
+    "deletePhoto": "Deletar foto",
+    "assignedTo": "Atribuído a",
+    "notAssigned": "Não atribuído",
+    "everyone": "Todos",
+    "assignTo": "Atribuir item a um membro da família",
+    "editCatDialogTitle": "Adicionar produto à categoria",
+    "editCatDialogBody": "Você deseja adicionar '{productName}' a {categoryName}?",
+    "reminderTooltip": "Os destinatários receberão um lembrete. Se ninguém for atribuído, o lembrete será recebido pelo criador deste item de produto.",
+    "reminderSet": "Seu lembrete foi agendado",
+    "reminder": "Lembrete",
+    "reminderBody": "Lembrete para o item da lista de compras: {productName}"
+  },
+
+  "profile": {
+    "pageTitle": "Meu perfil",
+    "manageFam": "Membros da família",
+    "changeLang": "Mudar idioma",
+    "changeTheme": "Mudar tema",
+    "catMgmt": "Gerenciar categorias",
+    "logout": "Sair",
+    "logoutMessage": "Tem certeza de que deseja sair?",
+    "changeLangSuccess": "Idioma alterado com sucesso"
+  },
+
+  "manage": {
+    "pageTitle": "Membros da família",
+    "joined": "Data de ingresso",
+    "removeDialogTitle": "Remover membro",
+    "removeDialogMessage": "Tem certeza de que deseja remover este membro da família?",
+    "removeSuccessful": "Membro removido com sucesso",
+    "invite": "Convidar membros para sua família",
+    "copy": "Copiar link",
+    "share": "Compartilhar link",
+    "shareMessage": "Olá. Estou convidando você para ser membro da minha casa digital.\nBaixe o aplicativo: https://shoppinglist.opensort.app\nID da família: {familyId}"
+  },
+
+  "manageCats": {
+    "title": "Gerenciar categorias",
+    "new": "Nova categoria",
+    "add": "Adicionar uma nova categoria",
+    "edit": "Editar categoria",
+    "delete": "Deletar categoria",
+    "deleteConfirm": "Tem certeza de que deseja deletar esta categoria?",
+    "createSuccess": "Categoria adicionada com sucesso",
+    "updateSuccess": "Categoria atualizada com sucesso",
+    "deleteSuccess": "Categoria deletada com sucesso"
+  }
+}

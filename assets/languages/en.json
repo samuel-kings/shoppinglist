@@ -1,0 +1,153 @@
+{
+  "general": {
+    "done": "Done",
+    "skip": "Skip",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "validator": "Name must be at least 3 characters long",
+    "emptyValidator": "Field cannot be empty",
+    "appVersion": "App Version",
+    "copied": "Copied to clipboard",
+    "opsCancelled": "Operation cancelled",
+    "enableNotifsDialogTitle": "Enable Notifications",
+    "enableNotifsDialogBody": "This allows you to be able to set reminders and get notified when an item is assigned to you.",
+    "enable": "Enable",
+    "enabled": "Notifications enabled",
+    "disabled": "Notifications disabled. You can go to your app setting to enable it later"
+  },
+
+  "localeScreens": {
+    "welcome": "WELCOME",
+    "getStarted": "Let's get started",
+    "selectLang": "Select language",
+    "english": "English",
+    "french": "French",
+    "spanish": "Spanish",
+    "portugese": "Portugese",
+    "russian": "Russian"
+  },
+
+  "onboarding": {
+    "onboardingTitle1": "Plan and organise your shopping",
+    "onboardingTitle2": "Shop with family",
+    "onboardingTitle3": "Access control",
+    "onboardingTitle4": "Get reminded",
+    "onboardingDesc1": "Welcome to our shopping app. Plan the next shopping with ease",
+    "onboardingDesc2": "You can add family and friends to your circle or join theirs, and collaborate together on a shopping plan",
+    "onboardingDesc3": "Manage who can access lists withing your cirle",
+    "onboardingDesc4": "Never forget a thing. Set timely reminders to help you remeber when and what to shop"
+  },
+
+  "createAcctNameScreen": {
+    "heading": "Account name"
+  },
+
+  "createOrJoinScreen": {
+    "createFam": "Create New Family",
+    "joinFam": "Join Existing Family",
+    "famName": "Enter family name",
+    "familyId": "Enter your family ID",
+    "create": "Create",
+    "join": "Join",
+    "success": "Signed in successfully"
+  },
+
+  "home": {
+    "title": "Shopping List",
+    "searchHint": "Add a product",
+    "createList": "Create new list",
+    "exit": "Press back again to exit",
+    "current": "Current",
+    "completed": "Completed",
+    "emptyList": "You have no shopping list. Click on the plus icon to create one",
+    "emptyList2": "You do not have any completed shopping list at the moment",
+    "view": "View",
+    "select": "Select",
+    "unselect": "Unselect",
+    "markComplete": "Mark as completed",
+    "markUncomplete": "Mark uncomplete",
+    "delete": "Delete",
+    "hide": "Hide checked items",
+    "show": "Show checked items",
+    "hideCat": "Hide categories",
+    "showCat": "Show categories",
+    "markSelectedComplete": "Check selected",
+    "markSelectedUncomplete": "Uncheck selected",
+    "deleteSelected": "Delete selected",
+    "markedAllMessage": "Marked all as completed",
+    "markedMessage": "Marked as completed",
+    "unmarkedAllMessage": "Marked all as uncompleted",
+    "unmarkedAMessage": "Marked as uncompleted",
+    "sureToDelete": "Are you sure you want to delete this item?",
+    "sureToDeleteSelected": "Are you sure you want to delete all selected items?",
+    "deletedMessage": "Removed from list",
+    "deletedSeletedMessage": "Selected items have been deleted",
+    "sortByPriority": "Sort by priority",
+    "sortByLastEdited": "Sort by last edited"
+  },
+
+  "details": {
+    "category": "Category",
+    "editCat": "Edit category",
+    "selectCat": "Select category",
+    "setReminder": "Set reminder",
+    "addPhoto": "Add photo",
+    "viewPhoto": "View photo",
+    "changePhoto": "Change photo",
+    "deletePhoto": "Remove photo",
+    "assignedTo": "Assigned to",
+    "notAssigned": "Not assigned",
+    "everyone": "Everyone",
+    "assignTo": "Assign item to a family member",
+    "editCatDialogTitle": "Add product to category",
+    "editCatDialogBody": "Do you want to add '{productName}' to {categoryName}?",
+    "reminderTooltip": "Assigneess will get a reminder. If no one is assigned, the reminder will be recieved by the creator of this product item.",
+    "reminderSet": "Your reminder has been scheduled",
+    "reminder": "Reminder",
+    "reminderBody": "Reminder for shopping list item: {productName}",
+    "nameEmptyMessage": "Name cannot be empty",
+    "priority": "Priority",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "estimatedPrice": "Estimated price",
+    "notSet": "Not set",
+    "price": "Price",
+    "selectPriority": "Select priority"
+  },
+
+  "profile": {
+    "pageTitle": "My Profile",
+    "manageFam": "Family Members",
+    "changeLang": "Change Language",
+    "changeTheme": "Change Theme",
+    "catMgmt": "Manage Categories",
+    "logout": "Logout",
+    "logoutMessage": "Are you sure you want to logout?",
+    "changeLangSuccess": "Language changed successfully"
+  },
+
+  "manage": {
+    "pageTitle": "Family Members",
+    "joined": "Date Joined",
+    "removeDialogTitle": "Remove Member",
+    "removeDialogMessage": "Are you sure you want to remove this member from family?",
+    "removeSuccessful": "Member removed successfully",
+    "invite": "Invite members to your family",
+    "copy": "Copy link",
+    "share": "Share link",
+    "shareMessage": "Hi. I'm inviting you to be a member of my digital home.\nDownload app: https://shoppinglist.opensort.app\nFamily ID: {familyId}"
+  },
+
+  "manageCats": {
+    "title": "Manage Categories",
+    "new": "New Category",
+    "add": "Add a new category",
+    "edit": "Edit category",
+    "delete": "Delete Category",
+    "deleteConfirm": "Are you sure you want to delete this category?",
+    "createSuccess": "Category added successfully",
+    "updateSuccess": "Category updated successfully",
+    "deleteSuccess": "Category deleted successfully"
+  }
+}

@@ -1,0 +1,21 @@
+.animate().fadeIn(duration: const Duration(milliseconds: 100));
+splashColor: Colors.transparent,
+highlightColor: Colors.transparent,
+context.getString("general.cancel")
+Text(context.getString("general.cancel"), style: Theme.of(context).textTheme.bodyLarge),
+Text(text, style: Theme.of(context).textTheme.bodyLarge)
+
+
+////////////////
+******* login functionality
+******* notify family on new added member
+******* notify family on new added product
+******* remove member from family
+******* notify user on account deletion
+******* edit title
+******* clickable links
+******* importance
+******* estimated price
+******* actual price 
+******* home page sort by importance
+******* home page sort by last edited
