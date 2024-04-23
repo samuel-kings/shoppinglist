@@ -218,79 +218,73 @@ class _ProfileScreenState extends State<ProfileScreen> with AfterLayoutMixin {
       ),
     ];
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (_) async {
-        Navigator.of(context).pop();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: leadingIcnBtn(context),
-          title: Text(context.getString("profile.pageTitle"), style: Theme.of(context).textTheme.titleMedium),
-        ),
-        bottomNavigationBar: Container(
-          height: 40,
-          color: Colors.transparent,
-          child: FutureBuilder(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return loadingAnimation(context);
-                }
-
-                final info = snapshot.data as PackageInfo;
-                final version = info.version;
-
-                return Center(
-                    child: Text("${context.getString("general.appVersion")} $version",
-                        style: Theme.of(context).textTheme.bodySmall));
-              }),
-        ),
-        body: Column(
-          children: [
-            // heading
-            Center(
-              child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.person_circle,
-                        size: 68,
-                      ),
-                      h12,
-                      Text(user.name, style: Theme.of(context).textTheme.titleMedium),
-                      h4,
-                      Text("FAMILY: ${family.name}", style: Theme.of(context).textTheme.titleSmall),
-                    ],
-                  )),
-            ),
-            h4,
-            const Divider(),
-            h4,
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                  children: drawerItems.map((item) {
-                return InkWell(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: item.onTap,
-                  child: Card(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: ListTile(
-                      leading: Icon(item.icon),
-                      title: Text(context.getString(item.name), style: Theme.of(context).textTheme.titleSmall),
-                      trailing: item.trailing,
+    return Scaffold(
+      appBar: AppBar(
+        leading: leadingIcnBtn(context),
+        title: Text(context.getString("profile.pageTitle"), style: Theme.of(context).textTheme.titleMedium),
+      ),
+      bottomNavigationBar: Container(
+        height: 40,
+        color: Colors.transparent,
+        child: FutureBuilder(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return loadingAnimation(context);
+              }
+    
+              final info = snapshot.data as PackageInfo;
+              final version = info.version;
+    
+              return Center(
+                  child: Text("${context.getString("general.appVersion")} $version",
+                      style: Theme.of(context).textTheme.bodySmall));
+            }),
+      ),
+      body: Column(
+        children: [
+          // heading
+          Center(
+            child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const Icon(
+                      CupertinoIcons.person_circle,
+                      size: 68,
                     ),
+                    h12,
+                    Text(user.name, style: Theme.of(context).textTheme.titleMedium),
+                    h4,
+                    Text("FAMILY: ${family.name}", style: Theme.of(context).textTheme.titleSmall),
+                  ],
+                )),
+          ),
+          h4,
+          const Divider(),
+          h4,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+                children: drawerItems.map((item) {
+              return InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: item.onTap,
+                child: Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: ListTile(
+                    leading: Icon(item.icon),
+                    title: Text(context.getString(item.name), style: Theme.of(context).textTheme.titleSmall),
+                    trailing: item.trailing,
                   ),
-                );
-              }).toList()),
-            )
-          ],
-        ),
-      ).animate().fadeIn(duration: const Duration(milliseconds: 400)),
-    );
+                ),
+              );
+            }).toList()),
+          )
+        ],
+      ),
+    ).animate().fadeIn(duration: const Duration(milliseconds: 400));
   }
 
   @override

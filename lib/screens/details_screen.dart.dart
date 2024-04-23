@@ -55,6 +55,8 @@ class DetailsScreenState extends State<DetailsScreen> {
 
   bool _isChangesMade = false;
 
+  bool _isScreenPopped = false;
+
   @override
   void initState() {
     super.initState();
@@ -1088,9 +1090,14 @@ class DetailsScreenState extends State<DetailsScreen> {
 
   /// save whatever was not been saved automatically on user exit
   void _onExit() {
+    if (_isScreenPopped) return;
+
     // detect if changes were made
     if (!_isChangesMade) {
-      Navigator.pop(context);
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _isScreenPopped = true;
+        Navigator.of(context).pop();
+      });
       return;
     }
 
@@ -1104,6 +1111,9 @@ class DetailsScreenState extends State<DetailsScreen> {
     }
 
     context.read<ShoppingListsProvider>().updateProduct(context, _product, _family.id);
-    Navigator.pop(context);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _isScreenPopped = true;
+      Navigator.of(context).pop();
+    });
   }
 }
