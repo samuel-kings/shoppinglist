@@ -413,9 +413,6 @@ class DetailsScreenState extends State<DetailsScreen> {
                                               type: AnimatedSnackBarType.warning);
                                         }
                                       },
-                                      onCancel: () => snackBarHelper(context,
-                                          message: context.getString("general.disabled"),
-                                          type: AnimatedSnackBarType.warning),
                                       cancelText: context.getString("general.cancel"),
                                       continueText: context.getString("general.enable"));
                                 }

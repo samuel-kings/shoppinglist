@@ -11,49 +11,40 @@ platformDialog(
     required Function() onContinue,
     required String cancelText,
     required String continueText,
-    bool barrierDismissible = true,
     bool showCancel = true,
-    Function()? onCancel,
     List<Widget>? others}) {
   showAdaptiveDialog(
       context: context,
-      barrierDismissible: barrierDismissible,
-      builder: (context) {
-        return PopScope(
-          canPop: false,
-          onPopInvoked: (_) async {
-            Navigator.of(context, rootNavigator: true).pop();
-          },
-          child: AlertDialog.adaptive(
-            title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [Text(message, style: Theme.of(context).textTheme.bodyMedium), if (others != null) ...others],
-            ),
-            titlePadding: const EdgeInsets.all(16),
-            contentPadding: const EdgeInsets.all(16),
-            actionsPadding: EdgeInsets.all(showCancel ? 16 : 5),
-            actionsAlignment: !showCancel ? MainAxisAlignment.start : MainAxisAlignment.center,
-            actions: [
-              if (showCancel)
-                TextButton(
-                  onPressed: () {
-                    if (onCancel != null) onCancel();
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                  child: Text(cancelText, style: Theme.of(context).textTheme.titleSmall),
-                ),
-              if (!showCancel) w20,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog.adaptive(
+          title: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [Text(message, style: Theme.of(ctx).textTheme.bodyMedium), if (others != null) ...others],
+          ),
+          titlePadding: const EdgeInsets.all(16),
+          contentPadding: const EdgeInsets.all(16),
+          actionsPadding: EdgeInsets.all(showCancel ? 16 : 5),
+          actionsAlignment: !showCancel ? MainAxisAlignment.start : MainAxisAlignment.center,
+          actions: [
+            if (showCancel)
               TextButton(
                 onPressed: () {
-                  onContinue();
-                  Navigator.of(context, rootNavigator: true).pop();
+                  Navigator.of(ctx).pop();
                 },
-                child: Text(continueText,
-                    style: Theme.of(context).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold)),
-              )
-            ],
-          ),
+                child: Text(cancelText, style: Theme.of(ctx).textTheme.titleSmall),
+              ),
+            if (!showCancel) w20,
+            TextButton(
+              onPressed: () {
+                onContinue();
+                Navigator.of(ctx).pop();
+              },
+              child:
+                  Text(continueText, style: Theme.of(ctx).textTheme.titleSmall!.copyWith(fontWeight: FontWeight.bold)),
+            )
+          ],
         );
       });
 }

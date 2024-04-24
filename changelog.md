@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.2
+* used shimmer for loading effect on the home page
+* notify family members when project is marked or unmarked as completed
+* fixed bug on popping modals
+
 ## v2.0.1
 * fixed bug on popping current route whne using PopScope
 
