@@ -9,6 +9,6 @@ snackBarHelper(BuildContext context,
     type: type,
     mobileSnackBarPosition: MobileSnackBarPosition.top,
     desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
-    duration: const Duration(seconds: 5),
+    duration: const Duration(seconds: 6),
   ).show(context);
 }

@@ -4,6 +4,7 @@ import 'package:ez_localization/ez_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:localstore/localstore.dart';
 import 'package:shoppinglist/consts/category_list.dart';
 import 'package:shoppinglist/consts/notif_keys.dart';
@@ -32,6 +33,7 @@ class ShoppingListsProvider extends ChangeNotifier {
   List<Category> _categories = [];
   bool _isSearching = false;
   bool _isGettingList = true;
+  bool _hasShownWarning = false;
 
   /// Instance of Firebase DB
   final _dbRef = FirebaseDatabase.instance.ref();
@@ -128,10 +130,12 @@ class ShoppingListsProvider extends ChangeNotifier {
       final cats = await _categoryListColl.get();
       if (shopping != null) _shoppingList = shopping.values.map((e) => Product.fromMap(e)).toList();
       if (cats != null) _categories = cats.values.map((e) => Category.fromMap(e)).toList();
-      if (shopping != null || cats != null) _isGettingList = false;
-      notifyListeners();
+      if (shopping != null || cats != null) {
+        _isGettingList = false;
+        notifyListeners();
+      }
 
-      // get categoryList
+      // get categoryList from DB
       final res = await _dbRef.child(familyId).child(PrefsConsts.categoryList).once();
       final values = res.snapshot.value;
       if (values != null) {
@@ -155,7 +159,7 @@ class ShoppingListsProvider extends ChangeNotifier {
         }
       }
 
-      // get shopping list
+      // get shopping list from DB
       final res2 = await _dbRef.child(familyId).child(PrefsConsts.shoppingList).once();
       final values2 = res2.snapshot.value;
       if (values2 != null) {
@@ -240,6 +244,38 @@ class ShoppingListsProvider extends ChangeNotifier {
       if (context.mounted) context.read<AuthProvider>().updateFam(context, family);
 
       _isGettingList = false;
+
+      if (!_hasShownWarning && shoppingList.isNotEmpty && context.mounted) {
+        _hasShownWarning = true;
+
+        // notify user to add estimated price if it's not added
+        for (var item in _shoppingList) {
+          if (item.estimatedPrice == null || item.estimatedPrice!.isEmpty || item.estimatedPrice == "0") {
+            HapticFeedback.heavyImpact();
+            snackBarHelper(context,
+                message: "One or more products do not have estimated price set. Please add now",
+                type: AnimatedSnackBarType.warning);
+            break;
+          }
+        }
+
+        // add reminders for products marked as completed without actual prices
+        for (var item in shoppingList) {
+          if (item.isDone == true &&
+              (item.actualPrice == null || item.actualPrice!.isEmpty || item.actualPrice == "0")) {
+            Future.delayed(const Duration(seconds: 5), () {
+              HapticFeedback.heavyImpact();
+              snackBarHelper(context,
+                  message: "One or more products marked as done do not have actual price set. Please add now",
+                  type: AnimatedSnackBarType.warning);
+            });
+            break;
+          }
+        }
+      }
+
+      _shoppingList = [..._shoppingList];
+      _categories = [..._categories];
       notifyListeners();
       return null;
     } on FirebaseException catch (e) {

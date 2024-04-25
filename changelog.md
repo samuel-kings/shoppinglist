@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.4
+* fixed double back on homepage not existing app
+* fixed bug on multiple warning snackbars on product without estimated prices on homepage
+
 ## v2.0.3
 * added preview to estimated and actual prices on the home page
 * added info button on the home page to show more total estimated and actual prices and the difference between them

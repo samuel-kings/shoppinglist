@@ -48,7 +48,7 @@ class _AuthFlowScreenState extends State<AuthFlowScreen> with AfterLayoutMixin {
     if (user == null) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const CreateAccountNameScreen()));
     } else {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const HomeScreen()));
     }
   }
 }

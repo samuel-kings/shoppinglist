@@ -30,10 +30,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   ShoppingListsProvider _listsProvider = ShoppingListsProvider();
   final List<String> _selection = [];
   AuthProvider _authProvider = AuthProvider();
@@ -43,10 +43,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool _sortPriority = false;
   bool _sortByLastEdited = false;
 
-  bool _hasShownWarning = false;
-
   final List<Product> _demoList = List.generate(
-      10,
+      20,
       (index) => Product(
           id: "id$index",
           name: "Loaing... Product $index",
@@ -239,34 +237,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           }
 
           List<Product> shoppingList = [...unDone.reversed.toList(), ...done.reversed.toList()];
-
-          // notify user to add estimated price if it's not added
-          if (!_hasShownWarning && shoppingList.isNotEmpty) {
-            for (var item in shoppingList) {
-              if (item.estimatedPrice == null || item.estimatedPrice!.isEmpty || item.estimatedPrice == "0") {
-                Future.delayed(const Duration(seconds: 2), () {
-                  snackBarHelper(context,
-                      message: "One or more products do not have estimated price set. Please add now",
-                      type: AnimatedSnackBarType.warning);
-                });
-
-                _hasShownWarning = true;
-                break;
-              }
-            }
-          }
-
-          // add reminders for products marked as completed without actual prices
-          for (var item in shoppingList) {
-            if (item.isDone == true && (item.actualPrice == null || item.actualPrice!.isEmpty || item.actualPrice == "0")) {
-              Future.delayed(const Duration(seconds: 2), () {
-                snackBarHelper(context,
-                    message: "One or more products marked as done do not have actual price set. Please add now",
-                    type: AnimatedSnackBarType.warning);
-              });
-              break;
-            }
-          }
 
           return Scaffold(
             appBar: AppBar(
@@ -567,6 +537,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     _loadingShimmer()
                   else
                     SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.only(top: 8),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -763,6 +734,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Skeletonizer(
       enabled: true,
       child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 8),
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
