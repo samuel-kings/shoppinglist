@@ -83,7 +83,9 @@
     "deletedMessage": "Removed from list",
     "deletedSeletedMessage": "Selected items have been deleted",
     "sortByPriority": "Sort by priority",
-    "sortByLastEdited": "Sort by last edited"
+    "sortByLastEdited": "Sort by last edited",
+    "estimatedPrice": "Estimated price",
+    "price": "Actual price"
   },
 
   "details": {

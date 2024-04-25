@@ -1,8 +1,12 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:collection/collection.dart';
 import 'package:community_material_icon/community_material_icon.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:ez_localization/ez_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -11,6 +15,7 @@ import 'package:shoppinglist/helpers/utils/onesignal_config.dart';
 import 'package:shoppinglist/helpers/widgets/loading_animation.dart';
 import 'package:shoppinglist/helpers/widgets/platform_dialog.dart';
 import 'package:shoppinglist/helpers/widgets/sized_boxes.dart';
+import 'package:shoppinglist/helpers/widgets/snackbar_helper.dart';
 import 'package:shoppinglist/models/product.dart';
 import 'package:provider/provider.dart';
 import 'package:recase/recase.dart';
@@ -38,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool _showCategories = true;
   bool _sortPriority = false;
   bool _sortByLastEdited = false;
+
+  bool _hasShownWarning = false;
 
   final List<Product> _demoList = List.generate(
       10,
@@ -233,6 +240,35 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           }
 
           List<Product> shoppingList = [...unDone.reversed.toList(), ...done.reversed.toList()];
+
+          // notify user to add estimated price if it's not added
+          if (!_hasShownWarning && shoppingList.isNotEmpty) {
+            for (var item in shoppingList) {
+              if (item.estimatedPrice == null || item.estimatedPrice!.isEmpty || item.estimatedPrice == "0") {
+                Future.delayed(const Duration(seconds: 2), () {
+                  snackBarHelper(context,
+                      message: "One or more products do not have estimated price set. Please add now",
+                      type: AnimatedSnackBarType.warning);
+                });
+
+                _hasShownWarning = true;
+                break;
+              }
+            }
+          }
+
+          // add reminders for products marked as completed without actual prices
+          for (var item in shoppingList) {
+            if (item.isDone == true && (item.actualPrice == null || item.actualPrice!.isEmpty || item.actualPrice == "0")) {
+              Future.delayed(const Duration(seconds: 2), () {
+                snackBarHelper(context,
+                    message: "One or more products marked as done do not have actual price set. Please add now",
+                    type: AnimatedSnackBarType.warning);
+              });
+              break;
+            }
+          }
+
           return Scaffold(
             appBar: AppBar(
                 title: Text(context.getString("home.title"), style: Theme.of(context).textTheme.titleMedium),
@@ -431,6 +467,94 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         )),
                   ),
                 )),
+            floatingActionButton: Visibility(
+              visible: !isLoading && shoppingList.isNotEmpty,
+              child: FloatingActionButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      showDragHandle: true,
+                      // isScrollControlled: true,
+                      builder: (context) {
+                        int estimatedPrice = 0;
+                        int actualPrice = 0;
+                        int difference = 0;
+
+                        for (var item in shoppingList) {
+                          if (item.estimatedPrice != null &&
+                              item.estimatedPrice!.isNotEmpty &&
+                              item.estimatedPrice != "0") {
+                            int price = int.parse(item.estimatedPrice!.replaceAll(",", "").replaceAll("₦", ""));
+                            estimatedPrice += price;
+                          }
+                          if (item.actualPrice != null && item.actualPrice!.isNotEmpty && item.actualPrice != "0") {
+                            int price = int.parse(item.actualPrice!.replaceAll(",", "").replaceAll("₦", ""));
+                            actualPrice += price;
+                          }
+                        }
+
+                        difference = estimatedPrice - actualPrice;
+
+                        String estimatedPriceStr =
+                            CurrencyTextInputFormatter.currency(symbol: "₦", locale: "en_NG", decimalDigits: 0)
+                                .formatString(estimatedPrice.toString());
+                        String actualPriceStr =
+                            CurrencyTextInputFormatter.currency(symbol: "₦", locale: "en_NG", decimalDigits: 0)
+                                .formatString(actualPrice.toString());
+                        String differenceStr =
+                            CurrencyTextInputFormatter.currency(symbol: "₦", locale: "en_NG", decimalDigits: 0)
+                                .formatString(difference.toString());
+                        Color color = difference < 0 ? Colors.red : Colors.green;
+
+                        List<({String title, String value})> info = [
+                          (title: "Total Estimated Cost", value: estimatedPriceStr),
+                          (title: "Amount Spent", value: actualPriceStr),
+                          (title: "Difference", value: differenceStr)
+                        ];
+
+                        return Column(
+                          children: [
+                            // summary
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Summary", style: Theme.of(context).textTheme.titleMedium),
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      icon: const Icon(Icons.close))
+                                ],
+                              ),
+                            ),
+                            const Divider(),
+                            SizedBox(
+                              height: 200,
+                              child: ListView.builder(
+                                itemCount: info.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  bool isDiff = info[index].title == "Difference";
+
+                                  return ListTile(
+                                    title: Text(info[index].title, style: Theme.of(context).textTheme.titleMedium),
+                                    trailing: Text(info[index].value,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge
+                                            ?.copyWith(color: isDiff ? color : null)),
+                                  );
+                                },
+                              ),
+                            )
+                          ],
+                        );
+                      });
+                },
+                child: const Icon(CupertinoIcons.info, size: 25),
+              ),
+            ),
             body: DoubleBackToCloseApp(
               snackBar: SnackBar(
                 content: Text(context.getString("home.exit"),
@@ -486,155 +610,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                         isLastItem = true;
                                       }
 
-                                      return FocusedMenuHolder(
-                                        menuWidth: MediaQuery.of(context).size.width * 0.55,
-                                        blurSize: 5.0,
-                                        menuItemExtent: 45,
-                                        menuBoxDecoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.inverseSurface.withOpacity(0.5),
-                                            borderRadius: const BorderRadius.all(Radius.circular(12.0))),
-                                        duration: const Duration(milliseconds: 100),
-                                        animateMenuItems: true,
-                                        blurBackgroundColor: Theme.of(context).colorScheme.inverseSurface,
-                                        openWithTap: false,
-                                        menuOffset: 10.0,
-                                        bottomOffsetHeight: 80,
-                                        menuItems: [
-                                          // view
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(context.getString("home.view"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon: const Icon(Icons.remove_red_eye_outlined),
-                                              onPressed: () async {
-                                                Navigator.of(context).push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailsScreen(product: prod, family: _family)));
-                                              }),
-                                          // select
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(
-                                                  context.getString(isSelected ? "home.unselect" : "home.select"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon: const Icon(CommunityMaterialIcons.select_multiple),
-                                              onPressed: () {
-                                                if (!isSelected) {
-                                                  _selection.add(prod.id!);
-                                                } else {
-                                                  _selection.remove(prod.id);
-                                                }
-                                                setState(() {
-                                                  isSelected = !isSelected;
-                                                });
-                                              }),
-                                          // markComplete
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(
-                                                  prod.isDone != true
-                                                      ? context.getString("home.markComplete")
-                                                      : context.getString("home.markUncomplete"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon:
-                                                  const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline),
-                                              onPressed: () async {
-                                                List<String> recipientIds =
-                                                    _family.members.map((e) => e.address).toList();
-                                                recipientIds.remove(_authProvider.user!.address);
-
-                                                String title = prod.isDone != true
-                                                    ? "Product marked as done"
-                                                    : "Product marked as undone";
-
-                                                if (prod.isDone != true) {
-                                                  prod.isDone = true;
-                                                } else {
-                                                  prod.isDone = false;
-                                                }
-
-                                                await _listsProvider.updateProduct(context, prod, _family.id);
-
-                                                NotificationProvider().sendNotification(
-                                                    title: title,
-                                                    message:
-                                                        "${prod.name} | ${prod.categoryName} by ${_authProvider.user?.name}",
-                                                    recipientIds: recipientIds);
-
-                                                setState(() {});
-                                              }),
-                                          // delete
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(context.getString("home.delete"),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall!
-                                                      .copyWith(color: Colors.red)),
-                                              trailingIcon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.redAccent,
-                                              ),
-                                              onPressed: () {
-                                                platformDialog(
-                                                    context: context,
-                                                    title: context.getString("home.delete"),
-                                                    message: context.getString("home.sureToDelete"),
-                                                    onContinue: () async {
-                                                      List<String> recipientIds =
-                                                          _family.members.map((e) => e.address).toList();
-                                                      recipientIds.remove(_authProvider.user!.address);
-
-                                                      await _listsProvider.deleteProduct(context,
-                                                          product: prod,
-                                                          familyId: _family.id,
-                                                          recipientIds: recipientIds,
-                                                          username: _authProvider.user!.name,
-                                                          familyName: _family.name);
-                                                    },
-                                                    cancelText: context.getString("general.cancel"),
-                                                    continueText: context.getString("general.continue"));
-                                              }),
-                                        ],
-                                        onPressed: () async {
-                                          if (_selection.isEmpty) {
-                                            Navigator.of(context).push(MaterialPageRoute(
-                                                builder: (context) => DetailsScreen(product: prod, family: _family)));
-                                          } else {
-                                            if (isSelected) {
-                                              _selection.remove(prod.id!);
-                                            } else {
-                                              _selection.add(prod.id!);
-                                            }
-                                            setState(() {});
-                                          }
-                                        },
-                                        child: Container(
-                                          width: double.infinity,
-                                          margin: isLastItem ? null : const EdgeInsets.only(bottom: 2),
-                                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                                          color: isSelected
-                                              ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
-                                              : Theme.of(context).colorScheme.onPrimary,
-                                          child: ListTile(
-                                            leading: Checkbox(
-                                                value: prod.isDone,
-                                                onChanged: (val) async {
-                                                  prod.isDone = val!;
-                                                  await _listsProvider.updateProduct(context, prod, _family.id);
-                                                  setState(() {});
-                                                }),
-                                            title: Text(prod.name ?? "",
-                                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                    decoration:
-                                                        prod.isDone == true ? TextDecoration.lineThrough : null)),
-                                            trailing: Visibility(
-                                                visible: isSelected,
-                                                child:
-                                                    const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline)),
-                                          ),
-                                        ),
-                                      );
+                                      return _buildItem(prod, isSelected, isLastItem);
                                     }).toList(),
                                   );
                                 }).toList()
@@ -664,311 +640,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                             isLastItem = true;
                                           }
 
-                                          return FocusedMenuHolder(
-                                            menuWidth: MediaQuery.of(context).size.width * 0.55,
-                                            blurSize: 5.0,
-                                            menuItemExtent: 45,
-                                            menuBoxDecoration: BoxDecoration(
-                                                color: Theme.of(context).colorScheme.inverseSurface.withOpacity(0.5),
-                                                borderRadius: const BorderRadius.all(Radius.circular(12.0))),
-                                            duration: const Duration(milliseconds: 100),
-                                            animateMenuItems: true,
-                                            blurBackgroundColor: Theme.of(context).colorScheme.inverseSurface,
-                                            openWithTap: false,
-                                            menuOffset: 10.0,
-                                            bottomOffsetHeight: 80,
-                                            menuItems: [
-                                              // view
-                                              FocusedMenuItem(
-                                                  backgroundColor: Theme.of(context).cardColor,
-                                                  title: Text(context.getString("home.view"),
-                                                      style: Theme.of(context).textTheme.titleSmall),
-                                                  trailingIcon: const Icon(Icons.remove_red_eye_outlined),
-                                                  onPressed: () async {
-                                                    Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            DetailsScreen(product: prod, family: _family)));
-                                                  }),
-                                              // select
-                                              FocusedMenuItem(
-                                                  backgroundColor: Theme.of(context).cardColor,
-                                                  title: Text(
-                                                      context.getString(isSelected ? "home.unselect" : "home.select"),
-                                                      style: Theme.of(context).textTheme.titleSmall),
-                                                  trailingIcon: const Icon(CommunityMaterialIcons.select_multiple),
-                                                  onPressed: () {
-                                                    if (!isSelected) {
-                                                      _selection.add(prod.id!);
-                                                    } else {
-                                                      _selection.remove(prod.id);
-                                                    }
-                                                    setState(() {
-                                                      isSelected = !isSelected;
-                                                    });
-                                                  }),
-                                              // markComplete
-                                              FocusedMenuItem(
-                                                  backgroundColor: Theme.of(context).cardColor,
-                                                  title: Text(
-                                                      prod.isDone != true
-                                                          ? context.getString("home.markComplete")
-                                                          : context.getString("home.markUncomplete"),
-                                                      style: Theme.of(context).textTheme.titleSmall),
-                                                  trailingIcon:
-                                                      const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline),
-                                                  onPressed: () async {
-                                                    List<String> recipientIds =
-                                                        _family.members.map((e) => e.address).toList();
-                                                    recipientIds.remove(_authProvider.user!.address);
-
-                                                    String title = prod.isDone != true
-                                                        ? "Product marked as done"
-                                                        : "Product marked as undone";
-
-                                                    if (prod.isDone != true) {
-                                                      prod.isDone = true;
-                                                    } else {
-                                                      prod.isDone = false;
-                                                    }
-
-                                                    await _listsProvider.updateProduct(context, prod, _family.id);
-
-                                                    NotificationProvider().sendNotification(
-                                                        title: title,
-                                                        message:
-                                                            "${prod.name} | ${prod.categoryName} by ${_authProvider.user?.name}",
-                                                        recipientIds: recipientIds);
-
-                                                    setState(() {});
-                                                  }),
-                                              // delete
-                                              FocusedMenuItem(
-                                                  backgroundColor: Theme.of(context).cardColor,
-                                                  title: Text(context.getString("home.delete"),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleSmall!
-                                                          .copyWith(color: Colors.red)),
-                                                  trailingIcon: const Icon(
-                                                    Icons.delete,
-                                                    color: Colors.redAccent,
-                                                  ),
-                                                  onPressed: () {
-                                                    platformDialog(
-                                                        context: context,
-                                                        title: context.getString("home.delete"),
-                                                        message: context.getString("home.sureToDelete"),
-                                                        onContinue: () async {
-                                                          List<String> recipientIds =
-                                                              _family.members.map((e) => e.address).toList();
-                                                          recipientIds.remove(_authProvider.user!.address);
-
-                                                          await _listsProvider.deleteProduct(context,
-                                                              product: prod,
-                                                              familyId: _family.id,
-                                                              recipientIds: recipientIds,
-                                                              username: _authProvider.user!.name,
-                                                              familyName: _family.name);
-                                                        },
-                                                        cancelText: context.getString("general.cancel"),
-                                                        continueText: context.getString("general.continue"));
-                                                  }),
-                                            ],
-                                            onPressed: () async {
-                                              if (_selection.isEmpty) {
-                                                Navigator.of(context).push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailsScreen(product: prod, family: _family)));
-                                              } else {
-                                                if (isSelected) {
-                                                  _selection.remove(prod.id!);
-                                                } else {
-                                                  _selection.add(prod.id!);
-                                                }
-                                                setState(() {});
-                                              }
-                                            },
-                                            child: Container(
-                                              width: double.infinity,
-                                              margin: isLastItem ? null : const EdgeInsets.only(bottom: 2),
-                                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                                              color: isSelected
-                                                  ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
-                                                  : Theme.of(context).colorScheme.onPrimary,
-                                              child: ListTile(
-                                                leading: Checkbox(
-                                                    value: prod.isDone,
-                                                    onChanged: (val) async {
-                                                      prod.isDone = val!;
-                                                      await _listsProvider.updateProduct(context, prod, _family.id);
-                                                      setState(() {});
-                                                    }),
-                                                title: Text(prod.name ?? "",
-                                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                        decoration:
-                                                            prod.isDone == true ? TextDecoration.lineThrough : null)),
-                                                trailing: Visibility(
-                                                    visible: isSelected,
-                                                    child: const Icon(
-                                                        CommunityMaterialIcons.checkbox_marked_circle_outline)),
-                                              ),
-                                            ),
-                                          );
+                                          return _buildItem(prod, isSelected, isLastItem);
                                         }).toList(),
                                       );
                                     }).toList()
                                   // sort by last edited
                                   : shoppingList.map((prod) {
                                       bool isSelected = _selection.contains(prod.id!);
+                                      bool isLastItem = shoppingList.indexOf(prod) == (shoppingList.length - 1);
 
-                                      return FocusedMenuHolder(
-                                        menuWidth: MediaQuery.of(context).size.width * 0.55,
-                                        blurSize: 5.0,
-                                        menuItemExtent: 45,
-                                        menuBoxDecoration: BoxDecoration(
-                                            color: Theme.of(context).colorScheme.inverseSurface.withOpacity(0.5),
-                                            borderRadius: const BorderRadius.all(Radius.circular(12.0))),
-                                        duration: const Duration(milliseconds: 100),
-                                        animateMenuItems: true,
-                                        blurBackgroundColor: Theme.of(context).colorScheme.inverseSurface,
-                                        openWithTap: false,
-                                        menuOffset: 10.0,
-                                        bottomOffsetHeight: 80,
-                                        menuItems: [
-                                          // view
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(context.getString("home.view"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon: const Icon(Icons.remove_red_eye_outlined),
-                                              onPressed: () async {
-                                                Navigator.of(context).push(MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DetailsScreen(product: prod, family: _family)));
-                                              }),
-                                          // select
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(
-                                                  context.getString(isSelected ? "home.unselect" : "home.select"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon: const Icon(CommunityMaterialIcons.select_multiple),
-                                              onPressed: () {
-                                                if (!isSelected) {
-                                                  _selection.add(prod.id!);
-                                                } else {
-                                                  _selection.remove(prod.id);
-                                                }
-                                                setState(() {
-                                                  isSelected = !isSelected;
-                                                });
-                                              }),
-                                          // markComplete
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(
-                                                  prod.isDone != true
-                                                      ? context.getString("home.markComplete")
-                                                      : context.getString("home.markUncomplete"),
-                                                  style: Theme.of(context).textTheme.titleSmall),
-                                              trailingIcon:
-                                                  const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline),
-                                              onPressed: () async {
-                                                List<String> recipientIds =
-                                                    _family.members.map((e) => e.address).toList();
-                                                recipientIds.remove(_authProvider.user!.address);
-
-                                                String title = prod.isDone != true
-                                                    ? "Product marked as done"
-                                                    : "Product marked as undone";
-
-                                                if (prod.isDone != true) {
-                                                  prod.isDone = true;
-                                                } else {
-                                                  prod.isDone = false;
-                                                }
-
-                                                await _listsProvider.updateProduct(context, prod, _family.id);
-
-                                                NotificationProvider().sendNotification(
-                                                    title: title,
-                                                    message:
-                                                        "${prod.name} | ${prod.categoryName} by ${_authProvider.user?.name}",
-                                                    recipientIds: recipientIds);
-
-                                                setState(() {});
-                                              }),
-                                          // delete
-                                          FocusedMenuItem(
-                                              backgroundColor: Theme.of(context).cardColor,
-                                              title: Text(context.getString("home.delete"),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleSmall!
-                                                      .copyWith(color: Colors.red)),
-                                              trailingIcon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.redAccent,
-                                              ),
-                                              onPressed: () {
-                                                List<String> recipientIds =
-                                                    _family.members.map((e) => e.address).toList();
-                                                recipientIds.remove(_authProvider.user!.address);
-
-                                                platformDialog(
-                                                    context: context,
-                                                    title: context.getString("home.delete"),
-                                                    message: context.getString("home.sureToDelete"),
-                                                    onContinue: () async {
-                                                      await _listsProvider.deleteProduct(context,
-                                                          product: prod,
-                                                          familyId: _family.id,
-                                                          recipientIds: recipientIds,
-                                                          username: _authProvider.user!.name,
-                                                          familyName: _family.name);
-                                                    },
-                                                    cancelText: context.getString("general.cancel"),
-                                                    continueText: context.getString("general.continue"));
-                                              }),
-                                        ],
-                                        onPressed: () async {
-                                          if (_selection.isEmpty) {
-                                            Navigator.of(context).push(MaterialPageRoute(
-                                                builder: (context) => DetailsScreen(product: prod, family: _family)));
-                                          } else {
-                                            if (isSelected) {
-                                              _selection.remove(prod.id!);
-                                            } else {
-                                              _selection.add(prod.id!);
-                                            }
-                                            setState(() {});
-                                          }
-                                        },
-                                        child: Container(
-                                          width: double.infinity,
-                                          margin: const EdgeInsets.only(bottom: 2, right: 4, left: 4),
-                                          color: isSelected
-                                              ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
-                                              : Theme.of(context).colorScheme.onPrimary,
-                                          child: ListTile(
-                                            leading: Checkbox(
-                                                value: prod.isDone,
-                                                onChanged: (val) async {
-                                                  prod.isDone = val!;
-                                                  await _listsProvider.updateProduct(context, prod, _family.id);
-                                                  setState(() {});
-                                                }),
-                                            title: Text(prod.name ?? "",
-                                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                                    decoration:
-                                                        prod.isDone == true ? TextDecoration.lineThrough : null)),
-                                            trailing: Visibility(
-                                                visible: isSelected,
-                                                child:
-                                                    const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline)),
-                                          ),
-                                        ),
-                                      );
+                                      return _buildItem(prod, isSelected, isLastItem);
                                     }).toList()),
                     ),
                   // loading and search results widgets
@@ -1028,6 +709,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                     }
                                     _searchController.clear();
                                     _listsProvider.clearSearchRes();
+
+                                    // remind user to add estimated price
+                                    Future.delayed(const Duration(seconds: 2), () {
+                                      snackBarHelper(context,
+                                          message: "Please add estimated price for ${prod.name}",
+                                          type: AnimatedSnackBarType.warning);
+                                    });
                                   },
                                   child: Container(
                                     height: 60,
@@ -1105,6 +793,159 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
               );
             }).toList()),
+      ),
+    );
+  }
+
+  Widget _buildItem(Product prod, bool isSelected, bool isLastItem) {
+    return FocusedMenuHolder(
+      menuWidth: MediaQuery.of(context).size.width * 0.55,
+      blurSize: 5.0,
+      menuItemExtent: 45,
+      menuBoxDecoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.inverseSurface.withOpacity(0.5),
+          borderRadius: const BorderRadius.all(Radius.circular(12.0))),
+      duration: const Duration(milliseconds: 100),
+      animateMenuItems: true,
+      blurBackgroundColor: Theme.of(context).colorScheme.inverseSurface,
+      openWithTap: false,
+      menuOffset: 10.0,
+      bottomOffsetHeight: 80,
+      menuItems: [
+        // view
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).cardColor,
+            title: Text(context.getString("home.view"), style: Theme.of(context).textTheme.titleSmall),
+            trailingIcon: const Icon(Icons.remove_red_eye_outlined),
+            onPressed: () async {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => DetailsScreen(product: prod, family: _family)));
+            }),
+        // select
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).cardColor,
+            title: Text(context.getString(isSelected ? "home.unselect" : "home.select"),
+                style: Theme.of(context).textTheme.titleSmall),
+            trailingIcon: const Icon(CommunityMaterialIcons.select_multiple),
+            onPressed: () {
+              if (!isSelected) {
+                _selection.add(prod.id!);
+              } else {
+                _selection.remove(prod.id);
+              }
+              setState(() {
+                isSelected = !isSelected;
+              });
+            }),
+        // markComplete
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).cardColor,
+            title: Text(
+                prod.isDone != true ? context.getString("home.markComplete") : context.getString("home.markUncomplete"),
+                style: Theme.of(context).textTheme.titleSmall),
+            trailingIcon: const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline),
+            onPressed: () async {
+              List<String> recipientIds = _family.members.map((e) => e.address).toList();
+              recipientIds.remove(_authProvider.user!.address);
+
+              String title = prod.isDone != true ? "Product marked as done" : "Product marked as undone";
+
+              if (prod.isDone != true) {
+                prod.isDone = true;
+              } else {
+                prod.isDone = false;
+              }
+
+              await _listsProvider.updateProduct(context, prod, _family.id);
+
+              NotificationProvider().sendNotification(
+                  title: title,
+                  message: "${prod.name} | ${prod.categoryName} by ${_authProvider.user?.name}",
+                  recipientIds: recipientIds);
+
+              setState(() {});
+            }),
+        // delete
+        FocusedMenuItem(
+            backgroundColor: Theme.of(context).cardColor,
+            title: Text(context.getString("home.delete"),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: Colors.red)),
+            trailingIcon: const Icon(
+              Icons.delete,
+              color: Colors.redAccent,
+            ),
+            onPressed: () {
+              platformDialog(
+                  context: context,
+                  title: context.getString("home.delete"),
+                  message: context.getString("home.sureToDelete"),
+                  onContinue: () async {
+                    List<String> recipientIds = _family.members.map((e) => e.address).toList();
+                    recipientIds.remove(_authProvider.user!.address);
+
+                    await _listsProvider.deleteProduct(context,
+                        product: prod,
+                        familyId: _family.id,
+                        recipientIds: recipientIds,
+                        username: _authProvider.user!.name,
+                        familyName: _family.name);
+                  },
+                  cancelText: context.getString("general.cancel"),
+                  continueText: context.getString("general.continue"));
+            }),
+      ],
+      onPressed: () async {
+        if (_selection.isEmpty) {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => DetailsScreen(product: prod, family: _family)));
+        } else {
+          if (isSelected) {
+            _selection.remove(prod.id!);
+          } else {
+            _selection.add(prod.id!);
+          }
+          setState(() {});
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        margin: isLastItem ? null : const EdgeInsets.only(bottom: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        color: isSelected
+            ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
+            : Theme.of(context).colorScheme.onPrimary,
+        child: ListTile(
+          // check box
+          leading: Checkbox(
+              value: prod.isDone,
+              onChanged: (val) async {
+                prod.isDone = val!;
+                await _listsProvider.updateProduct(context, prod, _family.id);
+                setState(() {});
+              }),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // product name
+              Text(prod.name ?? "",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(decoration: prod.isDone == true ? TextDecoration.lineThrough : null)),
+              h4,
+              // estimated price
+              Text("${context.getString("home.estimatedPrice")}: ${prod.estimatedPrice ?? ""}",
+                  style: Theme.of(context).textTheme.bodySmall),
+              if (prod.isDone == true) h4,
+              // actual price
+              if (prod.isDone == true)
+                Text("${context.getString("home.price")}: ${prod.actualPrice ?? ""}",
+                    style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+          trailing:
+              Visibility(visible: isSelected, child: const Icon(CommunityMaterialIcons.checkbox_marked_circle_outline)),
+        ),
       ),
     );
   }

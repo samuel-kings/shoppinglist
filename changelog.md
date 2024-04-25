@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.3
+* added preview to estimated and actual prices on the home page
+* added info button on the home page to show more total estimated and actual prices and the difference between them
+* added reminder snackbars for product without estimated prices
+* added reminders for products marked as completed without actual prices
+
 ## v2.0.2
 * used shimmer for loading effect on the home page
 * notify family members when project is marked or unmarked as completed
