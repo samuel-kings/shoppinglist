@@ -3,7 +3,7 @@ description: A joint shopping list app for families by Opensort
 
 publish_to: "none"
 
-version: 2.0.4+10
+version: 2.0.5+11
 
 environment:
   sdk: ">=3.3.3 <4.0.0"

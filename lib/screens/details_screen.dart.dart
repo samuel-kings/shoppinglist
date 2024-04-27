@@ -100,6 +100,106 @@ class DetailsScreenState extends State<DetailsScreen> {
     }
   }
 
+  /// Pick and upload image to firebase
+  Future<void> _pickAndUploadImage() async {
+    final file = await pickFile();
+
+    if (file != null) {
+      setState(() {
+        _selectedFile = file;
+      });
+    } else {
+      return;
+    }
+
+    // show waiting dialog
+    if (!mounted) return;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+              content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              loadingAnimation(context),
+            ],
+          ));
+        });
+
+    final record = await uploadImageToFirebase(_selectedFile!, _product.id!);
+
+    // close dialog
+    if (mounted) Navigator.of(context, rootNavigator: true).pop();
+
+    if (record.url != null) {
+      setState(() {
+        _product.addedPhotoUrl = record.url;
+        _isChangesMade = true;
+      });
+    } else {
+      if (mounted) {
+        snackBarHelper(context, message: record.error!, type: AnimatedSnackBarType.error);
+      }
+    }
+  }
+
+  /// Get list of assignees and concatenate them into a string
+  String _getAssignees() {
+    List<String> assigneesList = [];
+    for (var id in _product.assignedTo!) {
+      final member = _family.members.where((element) => element.address == id).first;
+      assigneesList.add(member.name);
+    }
+
+    String assigneesString = assigneesList.join(",");
+    return assigneesString;
+  }
+
+  /// a dialog to confirm if updated item should be permanently added to seleted cateogry
+  void _addProductToCat(String productName, Category cat) {
+    platformDialog(
+        context: context,
+        title: context.getString("details.editCatDialogTitle"),
+        message: context
+            .getString("details.editCatDialogBody", {"productName": productName, "categoryName": cat.name.titleCase}),
+        onContinue: () {
+          cat.products = [...cat.products, _product.name!.titleCase];
+          _provider.updateCategory(context, cat, _family.id);
+        },
+        cancelText: context.getString("general.cancel"),
+        continueText: context.getString("general.continue"));
+  }
+
+  /// save whatever was not been saved automatically on user exit
+  void _onExit() {
+    if (_isScreenPopped) return;
+
+    // detect if changes were made
+    if (!_isChangesMade) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _isScreenPopped = true;
+        Navigator.of(context).pop();
+      });
+      return;
+    }
+
+    _product.remindAt = _selectedDate?.toUtc().toIso8601String();
+    _product.note = _noteController.text.trim();
+    _product.name = _titleController.text.trim();
+
+    if (_product.name!.isEmpty) {
+      snackBarHelper(context, message: context.getString("details.nameEmptyMessage"), type: AnimatedSnackBarType.error);
+      return;
+    }
+
+    context.read<ShoppingListsProvider>().updateProduct(context, _product, _family.id);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _isScreenPopped = true;
+      Navigator.of(context).pop();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -503,7 +603,7 @@ class DetailsScreenState extends State<DetailsScreen> {
                           ),
                         ),
                         // photo
-                        if (_selectedFile == null && _product.addedPhotoUrl == null)
+                        if (_selectedFile == null && _product.addedPhotoUrl == null || _product.addedPhotoUrl!.isEmpty)
                           Container(
                             height: 60,
                             decoration: BoxDecoration(
@@ -586,10 +686,28 @@ class DetailsScreenState extends State<DetailsScreen> {
                                           onTap: () async {
                                             setState(() {
                                               _selectedFile = null;
-                                              _product.addedPhotoUrl = null;
+                                              _product.addedPhotoUrl = "";
                                               _isChangesMade = true;
                                             });
+
+                                            // show loading dialog
+                                            showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      content: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      loadingAnimation(context),
+                                                    ],
+                                                  ));
+                                                });
+
                                             final res = await deleteFileFromFirebase(_product.id!);
+
+                                            // close dialog
+                                            if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
 
                                             if (res == null) {
                                             } else {
@@ -1019,98 +1137,5 @@ class DetailsScreenState extends State<DetailsScreen> {
                 ));
           },
         )).animate().fadeIn(duration: const Duration(milliseconds: 400));
-  }
-
-  /// Pick and upload image to firebase
-  Future<void> _pickAndUploadImage() async {
-    final file = await pickFile();
-
-    if (file != null) {
-      setState(() {
-        _selectedFile = file;
-      });
-    } else {
-      return;
-    }
-
-    // show waiting dialog
-    if (!mounted) return;
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(content: loadingAnimation(context));
-        });
-
-    final record = await uploadImageToFirebase(_selectedFile!, _product.id!);
-
-    // close dialog
-    if (mounted) Navigator.of(context).pop();
-
-    if (record.url != null) {
-      setState(() {
-        _product.addedPhotoUrl = record.url;
-      });
-    } else {
-      if (mounted) {
-        snackBarHelper(context, message: record.error!, type: AnimatedSnackBarType.error);
-      }
-    }
-  }
-
-  /// Get list of assignees and concatenate them into a string
-  String _getAssignees() {
-    List<String> assigneesList = [];
-    for (var id in _product.assignedTo!) {
-      final member = _family.members.where((element) => element.address == id).first;
-      assigneesList.add(member.name);
-    }
-
-    String assigneesString = assigneesList.join(",");
-    return assigneesString;
-  }
-
-  /// a dialog to confirm if updated item should be permanently added to seleted cateogry
-  void _addProductToCat(String productName, Category cat) {
-    platformDialog(
-        context: context,
-        title: context.getString("details.editCatDialogTitle"),
-        message: context
-            .getString("details.editCatDialogBody", {"productName": productName, "categoryName": cat.name.titleCase}),
-        onContinue: () {
-          cat.products = [...cat.products, _product.name!.titleCase];
-          _provider.updateCategory(context, cat, _family.id);
-        },
-        cancelText: context.getString("general.cancel"),
-        continueText: context.getString("general.continue"));
-  }
-
-  /// save whatever was not been saved automatically on user exit
-  void _onExit() {
-    if (_isScreenPopped) return;
-
-    // detect if changes were made
-    if (!_isChangesMade) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _isScreenPopped = true;
-        Navigator.of(context).pop();
-      });
-      return;
-    }
-
-    _product.remindAt = _selectedDate?.toUtc().toIso8601String();
-    _product.note = _noteController.text.trim();
-    _product.name = _titleController.text.trim();
-
-    if (_product.name!.isEmpty) {
-      snackBarHelper(context, message: context.getString("details.nameEmptyMessage"), type: AnimatedSnackBarType.error);
-      return;
-    }
-
-    context.read<ShoppingListsProvider>().updateProduct(context, _product, _family.id);
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _isScreenPopped = true;
-      Navigator.of(context).pop();
-    });
   }
 }

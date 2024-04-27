@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.0.5
+- fixed dialog bug popping the screen on image upload
+
 ## v2.0.4
 * fixed double back on homepage not existing app
 * fixed bug on multiple warning snackbars on product without estimated prices on homepage
